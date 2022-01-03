@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Add Recipe</h1>
+        <h1>Edit Recipe</h1>
         <div>
             <label>Title</label>
             <input type="text" v-model="title" class="form-control"/>
@@ -12,7 +12,7 @@
                    placeholder="Seperate each ingredient with a comma"
                    v-model="ingredients"/>
         </div>
-        <button v-on:click="addNew" class="my-3">Add New</button>
+        <button v-on:click="updateRecipe" class="my-3">Update</button>
     </div>
 </template>
 
@@ -24,17 +24,25 @@ import axios from 'axios'
 export default {
     data:function(){
         return {
+            id:"",
             title: "",
             ingredients:""
         }
     },
+    created:async function() {
+        let response = await axios.get(BASE_API_URL + "recipes/" + this.recipeId)
+        this.title = response.data.title;
+        this.ingredients = response.data.ingredients
+        this.id = response.data_id;
+    },
+    props:['recipeId'],
     methods: {
-        "addNew":async function() {
-            await axios.post(BASE_API_URL + "recipes",{
+        "updateRecipe":async function() {
+            await axios.patch(BASE_API_URL + "recipes/" + this.recipeId,{
                 'title': this.title,
                 'ingredients': this.ingredients.split(',')
             });
-            this.$emit('new-recipe-created')
+            this.$emit('recipe-updated')
         }
     }
 }

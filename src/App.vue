@@ -15,9 +15,10 @@
      </ul>
      <!-- end navbar -->
      <div>
-       <Recipes v-if="page==='recipes'"/>
-       <AddRecipe v-if="page==='add'"/>
+       <Recipes v-if="page==='recipes'" v-on:update-recipe="editRecipe"/>
+       <AddRecipe v-if="page==='add'" v-on:new-recipe-created="onNewRecipeCreated"/>
        <AboutUs v-if="page==='about-us'"/>
+       <EditRecipe v-if="page==='edit'" v-bind:recipeId="recipeBeingEdited" v-on:recipe-updated="onRecipeUpdated"/>
        
      </div>
    </div>
@@ -28,15 +29,17 @@
 import AddRecipe from "@/components/AddRecipe"
 import Recipes from "@/components/Recipes"
 import AboutUs from "@/components/AboutUs"
+import EditRecipe from "@/components/EditRecipe"
 
 export default {
   name: 'App',
   components: {
-     Recipes, AddRecipe, AboutUs
+     Recipes, AddRecipe, AboutUs, EditRecipe
   },
   data: function() {
     return {
-      'page': 'recipes'
+      'page': 'recipes',
+      'recipeBeingEdited': 0
     }
   },
   methods:{
@@ -48,6 +51,16 @@ export default {
     },
     'goAboutUs': function() {
       this.page= "about-us"
+    },
+    'onNewRecipeCreated':function() {
+      this.page="recipes"
+    },
+    'editRecipe': function(recipeId) {
+      this.page="edit";
+      this.recipeBeingEdited = recipeId;
+    },
+    'onRecipeUpdated':function() {
+      this.page="recipes"
     }
   }
 }
